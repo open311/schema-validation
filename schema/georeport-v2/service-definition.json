@@ -1,0 +1,83 @@
+{
+  "description": "Attributes associated with a service code. These attributes can be unique to the city/jurisdiction.",
+  "required": [
+    "service_code",
+    "attributes"
+  ],
+  "properties": {
+    "service_code": {
+      "type": "string",
+      "description": "unique identifier for the service request type"
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "description": "A single attribute extension for a service",
+        "required": [
+          "variable",
+          "code",
+          "datatype",
+          "required"
+        ],
+        "properties": {
+          "variable": {
+            "type": "boolean",
+            "description": "If only used to present information to the user within the description field or if that user input is needed"
+          },
+          "code": {
+            "type": "string",
+            "description": "Unique identifier for the attribute"
+          },
+          "datatype": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "datetime",
+              "text",
+              "singlevaluelist",
+              "multivaluelist"
+            ],
+            "description": "Type of field used for user input. According widgets will be picked for user inputs"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "If attributes value required to submit service request"
+          },
+          "datatype_description": {
+            "type": "string",
+            "description": "Description of the datatype which helps the user provide their input"
+          },
+          "order": {
+            "type": "integer",
+            "description": "Sort order that the attributes will be presented to the user. 1 is shown first in the list."
+          },
+          "description": {
+            "type": "string",
+            "description": "description of the attribute field with instructions for the user to find and identify the requested information"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "description": "Possible value for ServiceAttribute that defines lists",
+              "required": [
+                "key",
+                "name"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Unique identifier associated with an option for singlevaluelist or multivaluelist (analogous to the value attribute in an html option tag)."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Human readable title of an option for singlevaluelist or multivaluelist (analogous to the innerhtml text node of an html option tag)."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

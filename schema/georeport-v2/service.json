@@ -1,0 +1,46 @@
+{
+  "description": "A single service (type) offered via Open311",
+  "required": [
+    "service_code",
+    "service_name",
+    "type"
+  ],
+  "properties": {
+    "service_code": {
+      "type": "string",
+      "description": "unique identifier for the service request type"
+    },
+    "service_name": {
+      "type": "string",
+      "description": "human readable name of the service request type"
+    },
+    "description": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "boolean",
+      "description": "Are there additional form fields for this service type? If true use GET service definition for that one"
+    },
+    "type": {
+      "type": "string",
+      "description": "Possible values realtime, batch, blackbox",
+      "enum": [
+        "realtime",
+        "batch",
+        "blackbox"
+      ]
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "collectionFormat": "csv",
+      "description": "list of keywords or tags seperated by comma"
+    },
+    "group": {
+      "type": "string",
+      "description": "Category or group to cluster different request types e.g. “sanitation”"
+    }
+  }
+}

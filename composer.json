@@ -1,0 +1,45 @@
+{
+    "name": "GSA/project-open-data-dashboard",
+    "description": "A Dashboard to Manage Project Open Data Information",
+    "keywords": ["json", "schema"],
+    "homepage": "https://github.com/GSA/project-open-data-dashboard/",
+    "type": "project",
+    "license": "",
+    "authors": [
+        {
+            "name": "Philip Ashlock",
+            "email": "datagov@gsa.gov"
+        }
+    ],
+    "repositories": [{
+        "type": "package",
+        "package": {
+            "name": "json-schema/JSON-Schema-Test-Suite",
+            "version": "1.1.0",
+            "source": {
+                "url": "https://github.com/json-schema/JSON-Schema-Test-Suite",
+                "type": "git",
+                "reference": "1.1.0"
+            }
+        }
+    }],
+    "require": {
+        "php": ">=5.3.0",
+        "justinrainbow/json-schema": "~1.3",
+        "michelf/php-markdown": "*",
+        "salsify/json-streaming-parser": "*"
+    },
+    "require-dev": {
+        "json-schema/JSON-Schema-Test-Suite": "1.1.0",
+        "phpunit/phpunit": "~3.7.0"
+    },
+    "autoload": {
+        "psr-0": { "JsonSchema": "src/" }
+    },
+    "bin": ["bin/validate-json"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.4.x-dev"
+        }
+    }
+}

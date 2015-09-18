@@ -6,7 +6,7 @@
 csv/*
 application/config/config.php
 application/config/gearman.php
-
+vendor/*
 .htaccess
 
 application/config/database.php

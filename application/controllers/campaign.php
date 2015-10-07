@@ -466,6 +466,12 @@ class Campaign extends CI_Controller {
     }
 
 
+    public function table_schema() {
+       $this->load->model('campaign_model', 'campaign');
+       $this->campaign->json_to_table_schema(); 
+    }
+
+
     /*
     $id can be all, cfo-act, or a specific id
     $component can be full-scan, all, datajson, datapage, digitalstrategy, download

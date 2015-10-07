@@ -984,6 +984,13 @@ class campaign_model extends CI_Model {
 
 	}
 
+	public function json_to_table_schema() {
+		$schema = 'georeport-v2/request.json';
+		$json_schema = $this->datajson_schema($schema);
+		$json_schema = $this->schema_to_model($json_schema);
+		var_dump($json_schema); exit;
+		return $json_schema; 
+	}
 
 
 	public function schema_to_model($schema) {

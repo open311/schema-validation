@@ -36,7 +36,7 @@
 
                 <label for="datajson_url">JSON URL</label>
                 <div class="input-group">
-                    <input name="datajson_url" id="datajson_url" class="form-control"  placeholder="e.g. http://energy.gov/data.json" >
+                    <input name="datajson_url" id="datajson_url" class="form-control"  placeholder="e.g. http://311api.cityofchicago.org/open311/v2/requests.json" >
                     <input name="qa" value="true" type="hidden">
                     <span class="input-group-btn">
                         <button type="submit" class="btn btn-primary">Validate URL</button>

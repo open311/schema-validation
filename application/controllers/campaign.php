@@ -866,6 +866,18 @@ class Campaign extends CI_Controller {
 
     }
 
+    public function assert_api_schema() {
+        $this->load->library('SwaggerAssert');
+
+        $assertion = new SwaggerAssert();
+        $assertion->setSchema('http://validate.open311.org/schema/georeport-v2/swagger.json');
+
+        $schema_path = 'services.json';
+        $api_url = 'http://labs.data.gov/crm/open311/v2/' . $schema_path;
+        $assertion->testBodyMatchDefinition($api_url, $schema_path);
+
+    }
+
 
 
 }

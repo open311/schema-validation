@@ -16,7 +16,8 @@
         "michelf/php-markdown": "*",
         "salsify/json-streaming-parser": "*",
         "phpunit/phpunit": "4.8.*",
-        "fr3d/swagger-assertions": "^0.3.0"
+        "fr3d/swagger-assertions": "^0.3.0",
+        "guzzlehttp/guzzle": "~5.0"
     },
     "bin": ["bin/validate-json"],
     "extra": {

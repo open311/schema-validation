@@ -44,7 +44,14 @@ class SwaggerAssert extends \PHPUnit_Framework_TestCase
 
         $response = $this->guzzleHttpClient->send($request);
         $responseBody = $response->json(['object' => true]);
-        
-        $this->assertResponseBodyMatch($responseBody, self::$schemaManager, '/' . $schema_path, 'get', 200);
+
+        try {
+            $this->assertResponseBodyMatch($responseBody, self::$schemaManager, '/' . $schema_path, 'get', 200);
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+
+
     }
 }

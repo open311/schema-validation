@@ -45,15 +45,36 @@
             "description": "If attributes value required to submit service request"
           },
           "datatype_description": {
-            "type": "string",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
             "description": "Description of the datatype which helps the user provide their input"
           },
           "order": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "description": "Sort order that the attributes will be presented to the user. 1 is shown first in the list."
           },
           "description": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "description": "description of the attribute field with instructions for the user to find and identify the requested information"
           },
           "values": {

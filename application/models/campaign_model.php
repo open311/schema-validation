@@ -80,7 +80,7 @@ class campaign_model extends CI_Model {
 
 
 
-	public function validate_datajson($datajson_url = null, $datajson = null, $headers = null, $schema = null, $return_source = false, $quality = false, $component = null) {
+	public function validate_datajson($datajson_url = null, $datajson = null, $headers = null, $schema = null, $return_source = false, $quality = false, $component = null, $totals = false) {
 
 
 		if ($datajson_url) {
@@ -519,6 +519,41 @@ class campaign_model extends CI_Model {
 				$dataset_array = ($schema == 'federal-v1.1' OR $schema == 'non-federal-v1.1') ? true : false;
 				//$datajson_decode = filter_json($datajson_decode, $dataset_array);			
 				$response['source'] = $datajson_decode;
+			}
+
+			if ($totals) {
+
+				if (!empty($response['errors'])) {
+
+					$field_errors = array();
+
+					foreach ($response['errors'] as $record) {
+
+						foreach($record as $field_name => $field) {
+							if(empty($field_errors[$field_name])){
+								$field_errors[$field_name] = array();
+							} 
+
+							if(!empty($field["errors"])) {
+								foreach ($field["errors"] as $error) {
+									$error_hash = md5($error);
+
+									if(empty($field_errors[$field_name][$error_hash])){
+										$field_errors[$field_name][$error_hash] = array('error_message' => $error, 'count' => 0);
+									}
+
+									$field_errors[$field_name][$error_hash]['count']++;
+
+								}
+							}
+
+						} 
+					}
+
+					unset($response['errors']);
+					$response['error_totals'] = $field_errors;
+				}
+				
 			}
 			
 			return $response;

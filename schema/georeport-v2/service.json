@@ -3,6 +3,7 @@
   "required": [
     "service_code",
     "service_name",
+    "metadata",
     "type"
   ],
   "properties": {
@@ -15,7 +16,14 @@
       "description": "human readable name of the service request type"
     },
     "description": {
-      "type": "string"
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "metadata": {
       "type": "boolean",
@@ -31,15 +39,25 @@
       ]
     },
     "keywords": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "collectionFormat": "csv",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
       "description": "list of keywords or tags seperated by comma"
     },
     "group": {
-      "type": "string",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
       "description": "Category or group to cluster different request types e.g. “sanitation”"
     }
   }

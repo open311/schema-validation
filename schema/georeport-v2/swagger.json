@@ -64,11 +64,7 @@
                     ]
                 },
                 "keywords": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "collectionFormat": "csv",
+                    "type": "string",
                     "description": "list of keywords or tags seperated by comma"
                 },
                 "group": {

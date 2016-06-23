@@ -784,10 +784,81 @@ class Campaign extends CI_Controller {
     }
 
 
+    public function endpoint($endpoint_url = null, $jurisdiction_id = null, $json_output = false) {
+
+        $endpoint_url   = ($this->input->get_post('endpoint_url')) ? $this->input->get_post('endpoint_url', TRUE) : $endpoint_url;
+        $jurisdiction_id   = ($this->input->get_post('jurisdiction_id')) ? $this->input->get_post('jurisdiction_id', TRUE) : $jurisdiction_id;
+        $json_output    = ($this->input->get_post('json_output')) ? $this->input->get_post('json_output', TRUE) : $json_output;
 
 
+        $models = array(); 
 
-    public function validate($datajson_url = null, $datajson = null, $headers = null, $schema = null, $output = 'browser') {
+        if($endpoint_url) {
+
+            $requests_url = $endpoint_url . 'requests.json?jurisdiction_id=' . $jurisdiction_id;
+            $models['requests'] = $this->validate($requests_url, null, null, 'georeport-v2/requests.json', 'internal', true);
+            $models['requests']['url'] = $requests_url;
+
+            if (!empty($models['requests']['source']) && is_array($models['requests']['source'])) {
+                if( $models['requests']['source'][0]->service_request_id ) {
+                    $request_id = $models['requests']['source'][0]->service_request_id;
+                    $request_url = $endpoint_url . 'requests/' . $request_id . '.json?jurisdiction_id=' . $jurisdiction_id;
+                    
+                    $models['request'] = $this->validate($request_url, null, null, 'georeport-v2/request.json', 'internal', true);
+                    $models['request']['url'] = $request_url;
+                } else {
+                    $models['request'] = array('valid' => null);
+                }
+                unset($models['request']['source']); 
+            }
+            unset($models['requests']['source']);
+
+            $services_url = $endpoint_url . 'services.json?jurisdiction_id=' . $jurisdiction_id;
+            $models['services'] = $this->validate($services_url, null, null, 'georeport-v2/services.json', 'internal', true);
+            $models['services']['url'] = $services_url;
+ 
+            if (!empty($models['services']['source'])) {            
+
+                $service_definition_errors = array();
+                $service_definition_count = 0;
+
+                foreach ($models['services']['source'] as $service) {
+                    if ($service->metadata === true) {
+                        
+                        $service_definition_count++;
+                        $service_definition = $this->validate($datajson_url = $endpoint_url . 'services/' . $service->service_code . '.json?jurisdiction_id=' . $jurisdiction_id, $datajson = null, $headers = null, $schema = 'georeport-v2/service-definition.json', $output = 'internal', $totals = true);    
+                        unset($service_definition['source']);
+
+                        if (!$service_definition['valid']) {
+                            $service_definition_errors[] = $service_definition['error_totals'];
+                        }
+                        $service_definition = null;
+                    }
+                }
+
+
+                $models['service_definitions'] = array();
+                $models['service_definitions']['total_records'] = $service_definition_count;
+                $models['service_definitions']['valid_count'] = $service_definition_count - count($service_definition_errors);
+                $models['service_definitions']['error_totals'] = $service_definition_errors;
+            }
+            unset($models['services']['source']);
+
+            if ($json_output == 'true') {
+                header('Content-type: application/json');
+                print json_encode($models);
+                exit;                
+            } else {
+                $output = array('models' => $models);
+                $this->load->view('validate_endpoint_response', $output);
+            }
+
+        }
+
+    }
+
+
+    public function validate($datajson_url = null, $datajson = null, $headers = null, $schema = null, $output = 'browser', $totals = false) {
 
         $this->load->model('campaign_model', 'campaign');
 
@@ -796,14 +867,13 @@ class Campaign extends CI_Controller {
 
         $datajson_url   = ($this->input->get_post('datajson_url')) ? $this->input->get_post('datajson_url', TRUE) : $datajson_url;
         $output_type    = ($this->input->get_post('output')) ? $this->input->get_post('output', TRUE) : $output;
+        $totals         =  ($this->input->get_post('totals')) ? $this->input->get_post('totals', TRUE) : $totals;
 
-        if ($this->input->get_post('qa')) {
-            $qa = $this->input->get_post('qa');
+        if ($this->input->get_post('qa') && $this->input->get_post('qa') == 'true') {
+            $qa = true;
         } else {
             $qa = false;
         }
-
-        if ($qa == 'true') $qa = true;
 
         if(!empty($_FILES)) {
 
@@ -827,16 +897,17 @@ class Campaign extends CI_Controller {
             }
         }
 
-        $return_source  = ($output_type == 'browser') ? true : false;
+        $return_source  = ($output_type == 'browser' || $output_type == 'internal') ? true : false;
 
         if($datajson OR $datajson_url) {
-            $validation = $this->campaign->validate_datajson($datajson_url, $datajson, $headers, $schema, $return_source, $qa);
+            $validation = $this->campaign->validate_datajson($datajson_url, $datajson, $headers, $schema, $return_source, $qa, null, $totals);
         }
-
-
 
         if(!empty($validation)) {
 
+             if ($output_type == 'internal') {
+                return $validation;
+             }
 
             if ($output_type == 'browser' && (!empty($validation['source']) || !empty($validation['fail']) )) {
 

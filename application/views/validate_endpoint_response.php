@@ -38,7 +38,7 @@
 
                         <?php if(!empty($model['valid'])) : ?>
                             <tr>
-                                <th>Valid</th> <td><?php echo $model['valid']; ?></td>
+                                <th>Valid</th> <td><?php if ($model['valid'] === true) echo 'Yes' ?></td>
                             </tr>
                         <?php endif; ?>                         
 

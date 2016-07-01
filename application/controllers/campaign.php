@@ -788,6 +788,7 @@ class Campaign extends CI_Controller {
 
         $endpoint_url   = ($this->input->get_post('endpoint_url')) ? $this->input->get_post('endpoint_url', TRUE) : $endpoint_url;
         $jurisdiction_id   = ($this->input->get_post('jurisdiction_id')) ? $this->input->get_post('jurisdiction_id', TRUE) : $jurisdiction_id;
+        $jurisdiction_id = (!empty($jurisdiction_id)) ? '?jurisdiction_id=' . $jurisdiction_id : '';
         $json_output    = ($this->input->get_post('json_output')) ? $this->input->get_post('json_output', TRUE) : $json_output;
 
 
@@ -795,14 +796,14 @@ class Campaign extends CI_Controller {
 
         if($endpoint_url) {
 
-            $requests_url = $endpoint_url . 'requests.json?jurisdiction_id=' . $jurisdiction_id;
+            $requests_url = $endpoint_url . 'requests.json' . $jurisdiction_id;
             $models['requests'] = $this->validate($requests_url, null, null, 'georeport-v2/requests.json', 'internal', true);
             $models['requests']['url'] = $requests_url;
 
             if (!empty($models['requests']['source']) && is_array($models['requests']['source'])) {
                 if( $models['requests']['source'][0]->service_request_id ) {
                     $request_id = $models['requests']['source'][0]->service_request_id;
-                    $request_url = $endpoint_url . 'requests/' . $request_id . '.json?jurisdiction_id=' . $jurisdiction_id;
+                    $request_url = $endpoint_url . 'requests/' . $request_id . '.json' . $jurisdiction_id;
                     
                     $models['request'] = $this->validate($request_url, null, null, 'georeport-v2/request.json', 'internal', true);
                     $models['request']['url'] = $request_url;
@@ -813,7 +814,7 @@ class Campaign extends CI_Controller {
             }
             unset($models['requests']['source']);
 
-            $services_url = $endpoint_url . 'services.json?jurisdiction_id=' . $jurisdiction_id;
+            $services_url = $endpoint_url . 'services.json' . $jurisdiction_id;
             $models['services'] = $this->validate($services_url, null, null, 'georeport-v2/services.json', 'internal', true);
             $models['services']['url'] = $services_url;
  
@@ -826,7 +827,7 @@ class Campaign extends CI_Controller {
                     if ($service->metadata === true) {
                         
                         $service_definition_count++;
-                        $service_definition = $this->validate($datajson_url = $endpoint_url . 'services/' . $service->service_code . '.json?jurisdiction_id=' . $jurisdiction_id, $datajson = null, $headers = null, $schema = 'georeport-v2/service-definition.json', $output = 'internal', $totals = true);    
+                        $service_definition = $this->validate($datajson_url = $endpoint_url . 'services/' . $service->service_code . '.json' . $jurisdiction_id, $datajson = null, $headers = null, $schema = 'georeport-v2/service-definition.json', $output = 'internal', $totals = true);    
                         unset($service_definition['source']);
 
                         if (!$service_definition['valid']) {
@@ -837,10 +838,38 @@ class Campaign extends CI_Controller {
                 }
 
 
+                if(!empty($service_definition_errors)) {
+                    $definition_errors = array();
+                    foreach ($service_definition_errors as $service_definition_error) {
+                        foreach ($service_definition_error as $field => $field_errors) {
+
+                            if (!empty($field_errors)) {
+                                if (empty($definition_errors[$field])) {
+                                    $definition_errors[$field] = array();
+                                }
+
+                                foreach ($field_errors as $error_hash => $field_error) {
+                                    if (empty($definition_errors[$field][$error_hash])) {
+                                        $definition_errors[$field][$error_hash] = $field_error;
+                                    } else {
+                                        $definition_errors[$field][$error_hash]['count'] = $definition_errors[$field][$error_hash]['count'] + $field_error['count'];
+                                    }
+                                }
+                            } 
+
+
+                        }
+                        
+
+                    }
+                }
+
+
                 $models['service_definitions'] = array();
                 $models['service_definitions']['total_records'] = $service_definition_count;
                 $models['service_definitions']['valid_count'] = $service_definition_count - count($service_definition_errors);
-                $models['service_definitions']['error_totals'] = $service_definition_errors;
+
+                $models['service_definitions']['error_totals'] = (!empty($definition_errors)) ? $definition_errors : null;
             }
             unset($models['services']['source']);
 

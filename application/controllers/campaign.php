@@ -791,14 +791,15 @@ class Campaign extends CI_Controller {
         $jurisdiction_id = (!empty($jurisdiction_id)) ? '?jurisdiction_id=' . $jurisdiction_id : '';
         $json_output    = ($this->input->get_post('json_output')) ? $this->input->get_post('json_output', TRUE) : $json_output;
 
+        $this->load->model('campaign_model', 'campaign');
 
         $models = array(); 
 
         if($endpoint_url) {
 
             $requests_url = $endpoint_url . 'requests.json' . $jurisdiction_id;
+           
             $models['requests'] = $this->validate($requests_url, null, null, 'georeport-v2/requests.json', 'internal', true);
-            $models['requests']['url'] = $requests_url;
 
             if (!empty($models['requests']['source']) && is_array($models['requests']['source'])) {
                 if( $models['requests']['source'][0]->service_request_id ) {
@@ -931,7 +932,6 @@ class Campaign extends CI_Controller {
         if($datajson OR $datajson_url) {
             $validation = $this->campaign->validate_datajson($datajson_url, $datajson, $headers, $schema, $return_source, $qa, null, $totals);
         }
-
         if(!empty($validation)) {
 
              if ($output_type == 'internal') {

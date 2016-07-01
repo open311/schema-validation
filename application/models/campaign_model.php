@@ -124,7 +124,6 @@ class campaign_model extends CI_Model {
 
 			}
 
-
 			if(!empty($datajson) && (empty($datajson_header['download_content_length']) || $datajson_header['download_content_length'] < 0)) {
 				$datajson_header['download_content_length'] = strlen($datajson);
 			}
@@ -288,8 +287,8 @@ class campaign_model extends CI_Model {
 
 						$response['total_records'] = $datajson_lines_count;		
 
-						if(!empty($datajson_header['download_content_length'])) {
-							$response['download_content_length'] = $datajson_header['download_content_length'];
+						if(!empty($datajson_header)) {
+							$response['header'] = $datajson_header;
 						}
 
 						if(empty($response['errors'])) {
@@ -340,7 +339,7 @@ class campaign_model extends CI_Model {
 								'valid_json' => $valid_json, 
 								'valid' => false, 
 								'fail' => $errors, 
-								'download_content_length' => $datajson_header['download_content_length']
+								'header' => $datajson_header
 								);
 
 
@@ -507,8 +506,8 @@ class campaign_model extends CI_Model {
 			}			
 
 
-			if(!empty($datajson_header['download_content_length'])) {
-				$response['download_content_length'] = $datajson_header['download_content_length'];
+			if(!empty($datajson_header)) {
+				$response['header'] = $datajson_header;
 			}
 
 			if(empty($response['errors'])) {
@@ -565,8 +564,8 @@ class campaign_model extends CI_Model {
 							'valid' => false, 
 							'fail' => $errors 
 							);
-			if(!empty($datajson_header['download_content_length'])) {
-				$response['download_content_length'] = $datajson_header['download_content_length'];
+			if(!empty($datajson_header)) {
+				$response['header'] = $datajson_header;
 			}
 
 			return $response;
